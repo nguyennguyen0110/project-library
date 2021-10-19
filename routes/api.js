@@ -22,6 +22,7 @@ const Book = new mongoose.model('Book', bookSchema);
 module.exports = function (app) {
 
   app.route('/api/books')
+    //GET all books with all fields except comments
     .get(function (req, res){
       Book.find({}).select('-comments').exec((err, books) => {
         if (err) return console.log(err);
@@ -29,6 +30,7 @@ module.exports = function (app) {
       });
     })
     
+    //POST a book to database with title
     .post(function (req, res){
       if (!req.body.title) {
         res.json('missing required field title');
@@ -36,7 +38,9 @@ module.exports = function (app) {
       else {
         Book.findOne({title: req.body.title}, (err, book) => {
           if (err) return console.log(err);
+          //If no such book in database
           if (book == null) {
+            //Create new Book Model name newBook
             let newBook = new Book({title: req.body.title, commentcount: 0});
             newBook.save((err, book) => {
               if (err) return console.log(err);
@@ -50,6 +54,7 @@ module.exports = function (app) {
       }
     })
     
+    //DELETE all books in database
     .delete(function(req, res){
       Book.deleteMany({}, err => {
         if (err) return console.log(err);
@@ -60,7 +65,9 @@ module.exports = function (app) {
 
 
   app.route('/api/books/:id')
+    //GET book with _id
     .get(function (req, res){
+      //Find book by -id, get all fields except commentcount
       Book.findById(req.params.id, '-commentcount', (err, book) => {
         if (err) return console.log(err);
         if (book == null) {
@@ -72,6 +79,7 @@ module.exports = function (app) {
       });
     })
     
+    //POST a comment to a book with _id
     .post(function(req, res){
       if (!req.body.comment) {
         res.json('missing required field comment');
@@ -94,6 +102,7 @@ module.exports = function (app) {
       }
     })
     
+    //DELETE one book with _id
     .delete(function(req, res){
       Book.findByIdAndRemove(req.params.id, (err, book) => {
         if (err) return console.log(err);
