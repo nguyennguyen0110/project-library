@@ -14,7 +14,8 @@ const server = require('../server');
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
-
+  
+  this.timeout(5000);
   /*
   * ----[EXAMPLE TEST]----
   * Each test should completely test the response of the API end-point including response status code!
